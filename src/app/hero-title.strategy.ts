@@ -1,39 +1,35 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterStateSnapshot, TitleStrategy, UrlSegment } from '@angular/router';
-import { map, Subscription } from 'rxjs';
-import { Hero } from './hero';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { HeroService } from './hero.service';
 
 @Injectable()
 export class HeroTitleStrategy extends TitleStrategy {
   private readonly title = inject(Title);
   private readonly heroService = inject(HeroService);
+  private readonly liveAnnouncer = inject(LiveAnnouncer);
 
   subscription: Subscription | null = null;
 
-  updateTitle(snapshot: RouterStateSnapshot): void {
-    this.subscription?.unsubscribe();
-
-    const customTitle = this.buildTitle(snapshot) || '';
+  async updateTitle(snapshot: RouterStateSnapshot): Promise<void> {
     const firstChild = snapshot.root.firstChild;
     const heroId = firstChild?.params['id'] || '';
 
+    let customTitle = this.buildTitle(snapshot) || '';
+
     if (heroId) {
       // Set hero name as page title
-      this.subscription = this.heroService
-        .getHero(heroId)
-        .pipe(
-          map((hero: Hero) => hero.name || ''),
-          map((heroTitle: string) => `${heroTitle}`)
-        )
-        .subscribe((pageTitle) => this.title.setTitle(pageTitle));
-    } else if (firstChild) {
-      // Set page title to url segment sequence
-      const routeSegments = firstChild.url.map(({ path }: UrlSegment) => path.charAt(0).toUpperCase() + path.slice(1));
-      this.title.setTitle(routeSegments.join(' - '));
+      const hero = await firstValueFrom(this.heroService.getHero(heroId));
+      customTitle = hero.name;
     } else {
-      this.title.setTitle(customTitle);
+      // Set page title to url segment sequence
+      const routeSegments = firstChild?.url.map(({ path }: UrlSegment) => path.charAt(0).toUpperCase() + path.slice(1));
+      customTitle = routeSegments?.join(' - ') || customTitle;
     }
+
+    this.liveAnnouncer.announce(customTitle);
+    this.title.setTitle(customTitle);
   }
 }
