@@ -20,6 +20,8 @@ export class AppComponent {
       )
       .subscribe((currentUrl: string) => {
         this.skipLinksPath = `${currentUrl}#content`;
+        const skipLink = document.querySelector('#skip-link') as HTMLAnchorElement;
+        skipLink?.focus();
       });
   }
 
