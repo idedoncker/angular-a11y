@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
@@ -9,12 +9,15 @@ import { HeroService } from '../hero.service';
   styleUrls: ['./heroes.component.css'],
 })
 export class HeroesComponent implements OnInit {
+  @ViewChild('heroName', { static: true }) heroInputRef!: ElementRef<HTMLInputElement>;
+
   heroes: Hero[] = [];
 
   constructor(private heroService: HeroService) {}
 
   ngOnInit(): void {
     this.getHeroes();
+    this.heroInputRef.nativeElement.focus();
   }
 
   getHeroes(): void {
