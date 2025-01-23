@@ -1,7 +1,10 @@
+<a id="skip-link" [href]="skipLinksPath">Skip to content</a>
 <h1>{{ title }}</h1>
 <nav>
   <a routerLink="/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page">Dashboard</a>
   <a routerLink="/heroes" routerLinkActive="active" ariaCurrentWhenActive="page">Heroes</a>
 </nav>
-<router-outlet></router-outlet>
+<main id="content">
+  <router-outlet></router-outlet>
+</main>
 <app-messages></app-messages>
