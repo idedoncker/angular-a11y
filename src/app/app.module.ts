@@ -1,5 +1,5 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { importProvidersFrom, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -25,15 +25,13 @@ import { MessagesComponent } from './messages/messages.component';
     HeroSearchComponent,
   ],
   bootstrap: [AppComponent],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    AppRoutingModule,
-    // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
+  imports: [BrowserModule, FormsModule, AppRoutingModule],
+  providers: [
+    provideHttpClient(withInterceptorsFromDi()),
+    // The HttpClientInMemoryWebApiModule module intercepts HTTP requestss
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { dataEncapsulation: false }),
+    importProvidersFrom(HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { dataEncapsulation: false })),
   ],
-  providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class AppModule {}
