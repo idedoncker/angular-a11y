@@ -1,4 +1,4 @@
-import { browser, element, by, ElementFinder, ElementArrayFinder } from 'protractor';
+import { ElementArrayFinder, ElementFinder, browser, by, element } from 'protractor';
 
 const expectedH1 = 'Tour of Heroes';
 const expectedTitle = `${expectedH1}`;
